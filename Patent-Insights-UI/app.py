@@ -1,64 +1,49 @@
 import streamlit as st
 
-# Dummy functions to simulate interaction.
-# Replace these with your actual model inference functions.
-def patent_novelty_assessment(user_input):
-    # Your model inference code here
-    return f"Novelty Assessment result for: {user_input}"
+def process_input(task, user_input):
+    # Dummy responses based on the task.
+    responses = {
+        "Patent Novelty Assessment": f"Assessing novelty for: {user_input}",
+        "Patent Claim Generation": f"Generating claim for: {user_input}",
+        "Patent Classification": f"Classifying patent: {user_input}",
+        "Patent Abstract Generation": f"Generating abstract for: {user_input}",
+    }
+    return responses[task]
 
-def patent_claim_generation(user_input):
-    # Your model inference code here
-    return f"Generated Claim for: {user_input}"
-
-def patent_classification(user_input):
-    # Your model inference code here
-    return f"Classification result for: {user_input}"
-
-def patent_abstract_generation(user_input):
-    # Your model inference code here
-    return f"Generated Abstract for: {user_input}"
-
-# Streamlit UI
+# Main Streamlit UI layout
 def main():
-    st.title("Patent Insights")
+    st.title("AI Patent Examiner")
 
-    # Role selection
     role = st.radio("Are you a patent examiner or a patent inventor?", ("Patent Examiner", "Inventor"))
 
-    # Initialize session state variables
-    if 'show_chat' not in st.session_state:
-        st.session_state.show_chat = False
-        st.session_state.chat_function = None
-
-    # Task-specific buttons and input forms
+    task = None
     if role == "Patent Examiner":
-        st.header("Dear Patent Examiner, I am trained to help you with two tasks:")
-        
-        if st.button("Patent Novelty Assessment"):
-            st.session_state.show_chat = True
-            st.session_state.chat_function = patent_novelty_assessment
-        elif st.button("Patent CPC Classification"):
-            st.session_state.show_chat = True
-            st.session_state.chat_function = patent_classification
-
+        st.header("Dear Patent Examiner, how can I assist you today?")
+        task = st.selectbox("Choose a task:", ["Patent Novelty Assessment", "Patent CPC Classification"])
     elif role == "Inventor":
-        st.header("Dear Patent Inventor, I am trained to help you with two tasks:")
-        
-        if st.button("Patent Claim Generation"):
-            st.session_state.show_chat = True
-            st.session_state.chat_function = patent_claim_generation
-        elif st.button("Abstract Generation"):
-            st.session_state.show_chat = True
-            st.session_state.chat_function = patent_abstract_generation
+        st.header("Dear Patent Inventor, how can I assist you today?")
+        task = st.selectbox("Choose a task:", ["Patent Claim Generation", "Patent Abstract Generation"])
 
-    # Chat interface
-    if st.session_state.show_chat and st.session_state.chat_function:
+    if task:
         st.header("Chat with AI")
-        user_input = st.text_input("Please enter your input:", key="user_input")
+        user_input = st.text_area("Please enter your input:", key="user_input")
 
-        if user_input:
-            result = st.session_state.chat_function(user_input)
-            st.write(result)
+        if st.button("Submit"):
+            # Assuming 'process_input' is a function that sends the user's message to the AI and gets a response
+            output = process_input(task, user_input)
+            
+            # Update the conversation in session state
+            if 'conversation' not in st.session_state:
+                st.session_state.conversation = []
+            st.session_state.conversation.append(("You", user_input))
+            st.session_state.conversation.append(("AI", output))
+
+            # Clear the text area
+            st.session_state.user_input = ""
+        
+        # Display the conversation
+        for author, message in reversed(st.session_state.get('conversation', [])):
+            st.text_area(f"{author} says:", value=message, height=75, key=f"msg_{author}_{message}")
 
 if __name__ == "__main__":
     main()
