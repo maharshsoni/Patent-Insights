@@ -12,7 +12,7 @@ def process_input(task, user_input):
 
 # Main Streamlit UI layout
 def main():
-    st.title("AI Patent Examiner")
+    st.title("Patent Insights: Fine-Tuned Patent Domain LLMs")
 
     role = st.radio("Are you a patent examiner or a patent inventor?", ("Patent Examiner", "Inventor"))
 
@@ -25,7 +25,7 @@ def main():
         task = st.selectbox("Choose a task:", ["Patent Claim Generation", "Patent Abstract Generation"])
 
     if task:
-        st.header("Chat with AI")
+        st.header("Chat with Patent Insights")
         user_input = st.text_area("Please enter your input:", key="user_input")
 
         if st.button("Submit"):

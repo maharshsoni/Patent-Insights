@@ -1,5 +1,7 @@
 import streamlit as st
 
+# Dummy functions to simulate interaction with AI models.
+# Replace these with your actual model inference functions.
 def process_input(task, user_input):
     # Dummy responses based on the task.
     responses = {
